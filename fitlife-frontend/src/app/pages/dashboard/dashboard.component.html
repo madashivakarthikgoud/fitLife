@@ -1,0 +1,130 @@
+<div class="dashboard">
+  <div class="page-header">
+    <h1 class="page-title">Welcome back! 💪</h1>
+    <p class="page-subtitle">Here's your fitness progress for today. Keep pushing toward your goals!</p>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-top">
+        <div>
+          <div class="stat-value">{{ caloriesBurned() }}</div>
+          <div class="stat-badge orange">+12%</div>
+        </div>
+        <div class="stat-icon orange">🔥</div>
+      </div>
+      <div class="stat-label">Calories Burned</div>
+      <div class="stat-micro">Fuel check: Keep that fire burning! 🔥</div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-top">
+        <div>
+          <div class="stat-value">{{ workoutCount() }}</div>
+          <div class="stat-badge green">+8%</div>
+        </div>
+        <div class="stat-icon green">💪</div>
+      </div>
+      <div class="stat-label">Workouts Completed</div>
+      <div class="stat-micro">Consistency pays: You're crushing it!</div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-top">
+        <div>
+          <div class="stat-value">{{ goalProgress() }}%</div>
+        </div>
+        <div class="stat-icon pink">🎯</div>
+      </div>
+      <div class="stat-label">Goal Progress</div>
+      <div class="stat-micro">You're getting closer every day 🟢</div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-top">
+        <div>
+          <div class="stat-value">{{ weeklyStreak }}</div>
+          <div class="stat-badge teal">+15%</div>
+        </div>
+        <div class="stat-icon teal">📈</div>
+      </div>
+      <div class="stat-label">Weekly Streak</div>
+      <div class="stat-micro">Days in a row – momentum building!</div>
+    </div>
+  </div>
+
+  <div class="dashboard-lower">
+    <div class="card today-goals">
+      <h3 class="card-title">Today's Goals</h3>
+      <div class="goal-row">
+        <div class="goal-info">
+          <span class="goal-pct">{{ caloriesPct() }}%</span>
+          <div class="goal-details">
+            <span class="goal-label">Calories</span>
+            <span class="goal-sub">{{ todayCalories() }} / {{ calorieGoal() | number }}</span>
+          </div>
+        </div>
+        <span class="goal-remaining">{{ (calorieGoal() - todayCalories()) | number }} remaining</span>
+      </div>
+      <div class="goal-bar-track">
+        <div class="goal-bar-fill orange-fill" [style.width.%]="caloriesPct()"></div>
+      </div>
+      <div class="goal-row" style="margin-top: 1.2rem">
+        <div class="goal-info">
+          <span class="goal-pct">{{ proteinPct() }}%</span>
+          <div class="goal-details">
+            <span class="goal-label">Protein</span>
+            <span class="goal-sub">{{ todayProtein() }}g / {{ proteinGoal() }}g</span>
+          </div>
+        </div>
+        <span class="goal-remaining">{{ proteinGoal() - todayProtein() }}g remaining</span>
+      </div>
+      <div class="goal-bar-track">
+        <div class="goal-bar-fill green-fill" [style.width.%]="proteinPct()"></div>
+      </div>
+    </div>
+
+    <div class="card quick-actions">
+      <h3 class="card-title">
+        <span class="material-icons-round" style="font-size: 18px">add</span>
+        Quick Actions
+      </h3>
+      <div class="actions-grid">
+        <button class="action-btn green-btn" id="quick-log-workout" (click)="navigate('/workouts')">
+          <span class="material-icons-round">fitness_center</span>
+          <span>Log Workout</span>
+        </button>
+        <button class="action-btn orange-btn" id="quick-add-meal" (click)="navigate('/nutrition')">
+          <span class="material-icons-round">restaurant</span>
+          <span>Add Meal</span>
+        </button>
+        <button class="action-btn teal-btn" id="quick-set-goal" (click)="navigate('/goals')">
+          <span class="material-icons-round">flag</span>
+          <span>Set Goal</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="card recent-activity">
+    <h3 class="card-title">Recent Activity</h3>
+    @if (recentItems().length === 0) {
+      <p class="no-activity">No recent activity. Start logging to see your progress here! 🚀</p>
+    } @else {
+      <div class="activity-list">
+        @for (item of recentItems(); track item.id) {
+          <div class="activity-item">
+            <div class="activity-icon" [class]="item.type">
+              <span class="material-icons-round">{{ item.type === 'workout' ? 'fitness_center' : 'restaurant' }}</span>
+            </div>
+            <div class="activity-info">
+              <span class="activity-name">{{ item.name }}</span>
+              <span class="activity-detail">{{ item.detail }}</span>
+            </div>
+            <span class="activity-time">{{ item.time }}</span>
+          </div>
+        }
+      </div>
+    }
+  </div>
+</div>

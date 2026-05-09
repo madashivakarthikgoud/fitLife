@@ -1,0 +1,151 @@
+<div class="profile-page">
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Profile</h1>
+      <p class="page-subtitle">Your body, your data 📊</p>
+    </div>
+    <div class="header-actions">
+      <button class="btn btn-primary" id="btn-edit-profile" (click)="isEditing ? saveProfile() : toggleEdit()">
+        <span class="material-icons-round">{{ isEditing ? 'save' : 'edit' }}</span>
+        {{ isEditing ? 'Save' : 'Edit Profile' }}
+      </button>
+      <button class="btn btn-danger" id="btn-logout" (click)="logout()">
+        <span class="material-icons-round">logout</span> Logout
+      </button>
+    </div>
+  </div>
+
+  <div class="profile-layout">
+    <div class="card profile-form-card">
+      <h3 class="section-title">Personal Information</h3>
+      <p class="section-sub">Keep it updated to get accurate insights</p>
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Full Name</label>
+          @if (isEditing) {
+            <input type="text" [(ngModel)]="form.fullName" />
+            @if (errors['name']) { <span class="error-text">{{ errors['name'] }}</span> }
+          } @else {
+            <div class="display-value">{{ user?.fullName || '—' }}</div>
+          }
+        </div>
+        <div class="form-group">
+          <label>Email</label>
+          @if (isEditing) {
+            <input type="email" [(ngModel)]="form.email" />
+          } @else {
+            <div class="display-value">{{ user?.email || '—' }}</div>
+          }
+        </div>
+        <div class="form-group">
+          <label>Age</label>
+          @if (isEditing) {
+            <input type="number" [(ngModel)]="form.age" min="10" max="100" />
+            @if (errors['age']) { <span class="error-text">{{ errors['age'] }}</span> }
+          } @else {
+            <div class="display-value">{{ user?.age || '—' }}</div>
+          }
+        </div>
+        <div class="form-group">
+          <label>Gender</label>
+          @if (isEditing) {
+            <select [(ngModel)]="form.gender">
+              @for (g of genders; track g) { <option [value]="g">{{ g }}</option> }
+            </select>
+          } @else {
+            <div class="display-value">{{ user?.gender || '—' }}</div>
+          }
+        </div>
+        <div class="form-group">
+          <label>Height (cm)</label>
+          @if (isEditing) {
+            <input type="number" [(ngModel)]="form.heightCm" min="50" max="250" />
+            @if (errors['height']) { <span class="error-text">{{ errors['height'] }}</span> }
+          } @else {
+            <div class="display-value">{{ user?.heightCm || '—' }}</div>
+          }
+        </div>
+        <div class="form-group">
+          <label>Weight (kg)</label>
+          @if (isEditing) {
+            <input type="number" [(ngModel)]="form.weightKg" min="20" max="300" />
+            @if (errors['weight']) { <span class="error-text">{{ errors['weight'] }}</span> }
+          } @else {
+            <div class="display-value">{{ user?.weightKg || '—' }}</div>
+          }
+        </div>
+      </div>
+
+      <div class="form-group full-width">
+        <label>Activity Level</label>
+        @if (isEditing) {
+          <select [(ngModel)]="form.activityLevel">
+            @for (a of activityLevels; track a) { <option [value]="a">{{ a }}</option> }
+          </select>
+        } @else {
+          <div class="display-value">{{ user?.activityLevel || '—' }}</div>
+        }
+      </div>
+
+      <div class="form-group full-width">
+        <label>Fitness Goal</label>
+        @if (isEditing) {
+          <select [(ngModel)]="form.fitnessGoal">
+            @for (g of fitnessGoals; track g) { <option [value]="g">{{ g }}</option> }
+          </select>
+        } @else {
+          <div class="display-value">{{ user?.fitnessGoal || '—' }}</div>
+        }
+      </div>
+
+      @if (isEditing) {
+        <div class="form-actions">
+          <button class="btn btn-secondary" (click)="toggleEdit()">Cancel</button>
+          <button class="btn btn-primary" (click)="saveProfile()">Save Changes</button>
+        </div>
+      }
+    </div>
+
+    <div class="profile-sidebar">
+      <div class="card avatar-card">
+        <div class="avatar-circle">
+          <span class="material-icons-round avatar-icon">person</span>
+        </div>
+        <h3 class="avatar-name">{{ user?.fullName || 'User' }}</h3>
+        <button class="btn btn-ghost avatar-upload">
+          <span class="material-icons-round">photo_camera</span>
+        </button>
+      </div>
+
+      <div class="card body-stats-card">
+        <h3 class="stats-title">Body Stats</h3>
+        <div class="bmi-display">
+          <span class="bmi-value" [style.color]="bmiColor">{{ bmi || '0.0' }}</span>
+          <span class="bmi-label">BMI</span>
+          <span class="bmi-category" [style.color]="bmiColor">{{ bmiLabel }}</span>
+        </div>
+        <div class="stats-row">
+          <div class="stat-item">
+            <span class="stat-val">{{ user?.heightCm || 0 }}</span>
+            <span class="stat-lbl">Height (cm)</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-val">{{ user?.weightKg || 0 }}</span>
+            <span class="stat-lbl">Weight (kg)</span>
+          </div>
+        </div>
+        <div class="stats-info">
+          <div class="info-row">
+            <span class="info-lbl">Activity Level:</span>
+            <span class="info-val">{{ user?.activityLevel || '—' }}</span>
+          </div>
+          <div class="info-row">
+            <span class="info-lbl">Goal:</span>
+            <span class="info-val">{{ user?.fitnessGoal || '—' }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

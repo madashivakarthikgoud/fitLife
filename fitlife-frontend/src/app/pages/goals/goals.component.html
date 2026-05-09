@@ -1,0 +1,129 @@
+<div class="goals-page">
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Goals</h1>
+      <p class="page-subtitle">Small steps = Big results 🚀</p>
+    </div>
+    <button class="btn btn-primary" id="btn-set-goal" (click)="openModal()">
+      <span class="material-icons-round">add</span> Set Goal
+    </button>
+  </div>
+
+  @if (activeGoals.length > 0) {
+    <div class="overall-card card">
+      <app-progress-ring [percentage]="overallProgress" [size]="110" color="var(--green-primary)" label="Overall" />
+      <div class="overall-info">
+        <h3>Overall Progress</h3>
+        <p>You're {{ overallProgress }}% closer to your goals! Keep going! 💪</p>
+      </div>
+    </div>
+  }
+
+  @if (activeGoals.length === 0 && completedGoals.length === 0) {
+    <app-empty-state icon="🎯" title="No goals set yet"
+      subtitle="Set your fitness goals and track your journey!"
+      actionLabel="Set Your First Goal" (action)="openModal()" />
+  }
+
+  @if (activeGoals.length > 0) {
+    <h3 class="section-title">Active Goals</h3>
+    <div class="goals-grid">
+      @for (goal of activeGoals; track goal.id) {
+        <div class="goal-card card">
+          <div class="goal-top">
+            <div class="goal-title-row">
+              <h4>{{ goal.title }}</h4>
+              <button class="btn-icon delete" (click)="deleteGoal(goal.id)">
+                <span class="material-icons-round">delete</span>
+              </button>
+            </div>
+            <span class="goal-type-badge">{{ goal.type }}</span>
+          </div>
+          <div class="goal-progress-section">
+            <app-progress-ring [percentage]="getProgress(goal)" [size]="80" />
+            <div class="goal-stats">
+              <div class="goal-stat">
+                <span class="stat-val">{{ goal.currentValue }}</span>
+                <span class="stat-lbl">Current</span>
+              </div>
+              <div class="goal-stat">
+                <span class="stat-val">{{ goal.targetValue }}</span>
+                <span class="stat-lbl">Target {{ goal.unit }}</span>
+              </div>
+            </div>
+          </div>
+          <div class="goal-slider">
+            <label class="slider-label">Update progress:</label>
+            <input type="range" [min]="0" [max]="goal.targetValue" [value]="goal.currentValue"
+              (input)="updateProgress(goal, +$any($event.target).value)" />
+          </div>
+          <p class="goal-weeks">{{ weeksLeft(goal) }} weeks remaining</p>
+        </div>
+      }
+    </div>
+  }
+
+  @if (completedGoals.length > 0) {
+    <h3 class="section-title completed-title">Completed Goals 🏆</h3>
+    <div class="goals-grid">
+      @for (goal of completedGoals; track goal.id) {
+        <div class="goal-card card completed">
+          <div class="goal-top">
+            <h4>{{ goal.title }}</h4>
+            <span class="completed-badge">✅ Done</span>
+          </div>
+          <p class="goal-stat-line">{{ goal.targetValue }} {{ goal.unit }} achieved!</p>
+        </div>
+      }
+    </div>
+  }
+
+  @if (showModal) {
+    <div class="modal-overlay" (click)="closeModal()">
+      <div class="modal-content" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h2 class="modal-title">Set New Goal</h2>
+          <button class="btn-icon" (click)="closeModal()">
+            <span class="material-icons-round">close</span>
+          </button>
+        </div>
+        <form (ngSubmit)="saveGoal()" class="modal-form">
+          <div class="form-group">
+            <label>Goal Title</label>
+            <input type="text" [(ngModel)]="form.title" name="title" placeholder="E.g., Reach 70kg" />
+          </div>
+          <div class="form-group">
+            <label>Goal Type</label>
+            <select [(ngModel)]="form.type" name="type" (change)="onTypeChange()">
+              @for (t of goalTypes; track t.value) { <option [value]="t.value">{{ t.label }}</option> }
+            </select>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Target Value</label>
+              <input type="number" [(ngModel)]="form.targetValue" name="target" min="1" />
+            </div>
+            <div class="form-group">
+              <label>Current Value</label>
+              <input type="number" [(ngModel)]="form.currentValue" name="current" min="0" />
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Unit</label>
+              <input type="text" [(ngModel)]="form.unit" name="unit" />
+            </div>
+            <div class="form-group">
+              <label>Deadline</label>
+              <input type="date" [(ngModel)]="form.deadline" name="deadline" />
+            </div>
+          </div>
+          <div class="modal-actions">
+            <button type="button" class="btn btn-secondary" (click)="closeModal()">Cancel</button>
+            <button type="submit" class="btn btn-primary">Set Goal</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  }
+</div>

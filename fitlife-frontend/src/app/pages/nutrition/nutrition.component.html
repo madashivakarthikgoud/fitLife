@@ -1,0 +1,141 @@
+<div class="nutrition-page">
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Nutrition</h1>
+      <p class="page-subtitle">Log what fuels you 💪</p>
+    </div>
+    <button class="btn btn-primary" id="btn-add-meal" (click)="openModal()">
+      <span class="material-icons-round">add</span> Add Meal
+    </button>
+  </div>
+
+  <div class="macro-grid">
+    <div class="macro-card card">
+      <app-progress-ring [percentage]="pct.calories" [size]="90" color="var(--orange-primary)" label="Calories" />
+      <div class="macro-info">
+        <span class="macro-value">{{ totals.calories }} / {{ goals.calories }}</span>
+        <span class="macro-remaining">{{ remaining.calories }} remaining</span>
+      </div>
+    </div>
+    <div class="macro-card card">
+      <app-progress-ring [percentage]="pct.protein" [size]="90" color="var(--green-primary)" label="Protein" />
+      <div class="macro-info">
+        <span class="macro-value">{{ totals.protein }}g / {{ goals.protein }}g</span>
+        <span class="macro-remaining">{{ remaining.protein }}g remaining</span>
+      </div>
+    </div>
+    <div class="macro-card card">
+      <app-progress-ring [percentage]="pct.carbs" [size]="90" color="var(--blue-primary)" label="Carbs" />
+      <div class="macro-info">
+        <span class="macro-value">{{ totals.carbs }}g / {{ goals.carbs }}g</span>
+        <span class="macro-remaining">{{ remaining.carbs }}g remaining</span>
+      </div>
+    </div>
+    <div class="macro-card card">
+      <app-progress-ring [percentage]="pct.fat" [size]="90" color="var(--yellow-primary)" label="Fat" />
+      <div class="macro-info">
+        <span class="macro-value">{{ totals.fat }}g / {{ goals.fat }}g</span>
+        <span class="macro-remaining">{{ remaining.fat }}g remaining</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card food-log-section">
+    <h3 class="section-title">Today's Food Log</h3>
+    @if (todayMeals.length === 0) {
+      <app-empty-state icon="🍴" title="No meals logged yet"
+        subtitle="Start tracking your nutrition to hit your goals!"
+        actionLabel="Log Your First Meal" (action)="openModal()" />
+    } @else {
+      <div class="meal-list">
+        @for (m of todayMeals; track m.id) {
+          <div class="meal-item">
+            <div class="meal-type-icon">
+              @switch (m.mealType) {
+                @case ('Breakfast') { 🌅 }
+                @case ('Lunch') { ☀️ }
+                @case ('Dinner') { 🌙 }
+                @case ('Snack') { 🍎 }
+              }
+            </div>
+            <div class="meal-info">
+              <span class="meal-name">{{ m.foodName }}</span>
+              <span class="meal-detail">{{ m.mealType }} • {{ m.quantity }}{{ m.unit }}</span>
+            </div>
+            <div class="meal-macros">
+              <span>{{ m.calories }} cal</span>
+              <span>P: {{ m.protein }}g</span>
+              <span>C: {{ m.carbs }}g</span>
+              <span>F: {{ m.fat }}g</span>
+            </div>
+            <button class="btn-icon delete" (click)="deleteMeal(m.id)">
+              <span class="material-icons-round">delete</span>
+            </button>
+          </div>
+        }
+      </div>
+    }
+  </div>
+
+  @if (showModal) {
+    <div class="modal-overlay" (click)="closeModal()">
+      <div class="modal-content" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <div>
+            <h2 class="modal-title">Add Meal</h2>
+            <p class="modal-subtitle">Search for a food item or enter manually</p>
+          </div>
+          <button class="btn-icon" (click)="closeModal()">
+            <span class="material-icons-round">close</span>
+          </button>
+        </div>
+
+        <form (ngSubmit)="saveMeal()" class="modal-form">
+          <div class="form-group search-group">
+            <label>Food Item</label>
+            <input type="text" [(ngModel)]="searchQuery" name="search" placeholder="Search food..." (input)="onSearch()" autocomplete="off" />
+            @if (searchResults.length > 0) {
+              <div class="search-dropdown">
+                @for (r of searchResults; track r.name) {
+                  <button type="button" class="search-item" (click)="selectFood(r)">
+                    <span>{{ r.name }}</span>
+                    <span class="search-cal">{{ r.caloriesPer100g }} cal/100g</span>
+                  </button>
+                }
+              </div>
+            }
+          </div>
+
+          <div class="form-group">
+            <label>Meal Type</label>
+            <select [(ngModel)]="form.mealType" name="mealType">
+              @for (t of mealTypes; track t) { <option [value]="t">{{ t }}</option> }
+            </select>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Quantity</label>
+              <input type="number" [(ngModel)]="form.quantity" name="qty" (change)="onQuantityChange()" min="1" />
+            </div>
+            <div class="form-group">
+              <label>Calories</label>
+              <input type="number" [(ngModel)]="form.calories" name="cal" />
+            </div>
+          </div>
+
+          <div class="form-row three-col">
+            <div class="form-group"><label>Protein (g)</label><input type="number" [(ngModel)]="form.protein" name="protein" /></div>
+            <div class="form-group"><label>Carbs (g)</label><input type="number" [(ngModel)]="form.carbs" name="carbs" /></div>
+            <div class="form-group"><label>Fat (g)</label><input type="number" [(ngModel)]="form.fat" name="fat" /></div>
+          </div>
+
+          <div class="modal-actions">
+            <button type="button" class="btn btn-secondary" (click)="closeModal()">Cancel</button>
+            <button type="submit" class="btn btn-primary">Save Meal</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  }
+</div>

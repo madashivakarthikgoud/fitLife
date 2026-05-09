@@ -1,0 +1,117 @@
+Project: FitLife – Workout & Food Tracker App
+🎯 Objective
+
+A modern, efficient, and engaging web app to help users:
+Log daily workouts
+Track food & nutrition
+Set fitness goals
+Monitor progress with charts
+Maintain personal health profile
+The app must have rich UI, smooth animations, and micro-interactions (hover effects, button presses, loading states).
+Target design = clean, minimal, fitness-inspired (green + dark theme).
+
+🧭 Navigation
+
+Dashboard
+Quick stats (Calories, Workouts, Goals Progress)
+Shortcuts to log workout/meal
+Workout Section
+Add/Edit/Delete workouts
+Fields: Exercise name, category, sets, reps, weight, duration, notes
+Food Tracker
+Log meals with calories/macros
+Show daily total intake vs goal
+Search food items with auto-suggest
+Goals
+Set goals: weight loss, muscle gain, maintenance
+Progress tracking with percentage + timeline
+History / Reports
+View past logs
+Filter by date range
+Show progress charts (line/bar/pie)
+Profile
+View/Edit user info (Name, Age, Height, Weight)
+Track body stats (BMI, fat %, muscle %)
+🎨 UI Components & Microcopy
+
+Dashboard
+
+Cards for "Calories Burned", "Workouts Completed", "Goal Progress"
+Microcopy:
+Calories Card: "Fuel check: You’ve burned {{calories}} today!"
+Workouts Card: "Consistency pays: {{count}} sessions logged."
+Goal Card: "You’re {{progress}}% closer to your goal!"
+Workout Section
+
+Form with:
+Text input (exercise name)
+Dropdown (category: strength, cardio, flexibility, etc.)
+Number inputs (sets, reps, weight, duration)
+Notes field (textarea)
+Buttons: Save, Edit, Delete, Back
+Microcopy:
+Placeholder for exercise: "E.g., Bench Press, Running"
+Validation message: "Exercise name cannot be empty"
+Food Tracker
+
+Searchable dropdown / autocomplete for food items
+Inputs: quantity, portion size, calories/macros auto-fill
+Daily total bar (progress vs. goal)
+Microcopy:
+"Log what fuels you 💪"
+"Stay under {{goalCalories}} kcal to smash today’s target"
+Goals
+
+Sliders for setting target weight/calories/workout frequency
+Circular progress indicators for current status
+Microcopy:
+"Small steps = Big results 🚀"
+"You’re {{weeksLeft}} weeks away from your target!"
+History / Reports
+
+Table view of workouts/food logs
+Filter by date range
+Charts:
+Line chart for calories over time
+Bar chart for workout sessions per week
+Pie chart for macro breakdown
+Microcopy:
+"Progress isn’t always visible day to day, but look here 👀"
+Profile
+
+Profile picture/avatar upload
+Inputs: name, age, gender, height, weight
+Body stats tracker
+Microcopy:
+"Your body, your data 📊"
+"Keep it updated to get accurate insights"
+⚡ Interactions
+
+Smooth page transitions (fade/slide)
+Button hover = color shift + ripple animation
+Loading states: spinners + motivational quotes (e.g., "Greatness takes time ⏳")
+Toast notifications for actions (e.g., "Workout logged successfully ✅")
+Goal tracking updates animate progress bars
+🛡️ Validations
+
+Workout Logging
+Exercise name required
+Sets/Reps must be positive integers
+Duration must be > 0 minutes if cardio
+Food Logging
+Calories must be > 0
+Food item required
+Profile
+Name cannot be empty
+Age must be 10–100
+Height 50–250 cm
+Weight 20–300 kg
+Goals
+Goal values must be realistic (weight loss < 1.5 kg per week)
+Cannot set negative targets
+📊 Special Features
+
+Animated progress rings and charts
+Dark/Light theme toggle
+Motivational quotes widget on Dashboard
+Weekly email summary (optional)
