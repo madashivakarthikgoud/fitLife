@@ -1,0 +1,17 @@
+# Java / Maven
+fitlife-backend/target/
+*.class
+*.jar
+*.war
+
+# Node / Angular
+fitlife-frontend/node_modules/
+fitlife-frontend/dist/
+fitlife-frontend/.angular/
+
+# IDE / OS
+.idea/
+*.iml
+.vscode/
+.DS_Store
+Thumbs.db
