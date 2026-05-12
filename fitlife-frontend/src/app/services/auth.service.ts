@@ -1,4 +1,4 @@
-import { Injectable, signal, inject } from '@angular/core';
+﻿import { Injectable, signal, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../environments/environment';
 import { Router } from '@angular/router';
@@ -36,6 +36,8 @@ export class AuthService {
     if (token && savedUser && !this.isTokenExpired(token)) {
       this.currentUser.set(JSON.parse(savedUser));
       this.isLoggedIn.set(true);
+      // Always refresh profile from server to get latest data
+      this.loadProfile();
     } else if (token) {
       // Token exists but is expired — clean up
       this.logout();
@@ -99,8 +101,13 @@ export class AuthService {
 
   loadProfile(): void {
     this.http.get<User>(`${this.apiUrl}/users/profile`).subscribe({
-      next: (user) => { this.currentUser.set(user); localStorage.setItem('fitlife_user', JSON.stringify(user)); },
-      error: (err) => this.toast.error(err.error?.error || 'Failed to load profile')
+      next: (user) => {
+        this.currentUser.set(user);
+        localStorage.setItem('fitlife_user', JSON.stringify(user));
+      },
+      error: () => {
+        // Silently fail — interceptor handles 401 session expiry
+      }
     });
   }
 
@@ -140,3 +147,4 @@ export class AuthService {
     });
   }
 }
+

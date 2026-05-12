@@ -2,7 +2,7 @@
   <div class="page-header">
     <div>
       <h1 class="page-title">Nutrition</h1>
-      <p class="page-subtitle">Log what fuels you 💪</p>
+      <p class="page-subtitle">Log what fuels your performance</p>
     </div>
     <button class="btn btn-primary" id="btn-add-meal" (click)="openModal()">
       <span class="material-icons-round">add</span> Add Meal
@@ -43,7 +43,7 @@
   <div class="card food-log-section">
     <h3 class="section-title">Today's Food Log</h3>
     @if (todayMeals.length === 0) {
-      <app-empty-state icon="🍴" title="No meals logged yet"
+      <app-empty-state icon="restaurant" title="No meals logged yet"
         subtitle="Start tracking your nutrition to hit your goals!"
         actionLabel="Log Your First Meal" (action)="openModal()" />
     } @else {
@@ -52,15 +52,16 @@
           <div class="meal-item">
             <div class="meal-type-icon">
               @switch (m.mealType) {
-                @case ('Breakfast') { 🌅 }
-                @case ('Lunch') { ☀️ }
-                @case ('Dinner') { 🌙 }
-                @case ('Snack') { 🍎 }
+                @case ('Breakfast') { <span class="material-icons-round">wb_sunny</span> }
+                @case ('Lunch') { <span class="material-icons-round">light_mode</span> }
+                @case ('Dinner') { <span class="material-icons-round">nightlight</span> }
+                @case ('Snack') { <span class="material-icons-round">fastfood</span> }
+                @default { <span class="material-icons-round">restaurant</span> }
               }
             </div>
             <div class="meal-info">
               <span class="meal-name">{{ m.foodName }}</span>
-              <span class="meal-detail">{{ m.mealType }} • {{ m.quantity }}{{ m.unit }}</span>
+              <span class="meal-detail">{{ m.mealType }} &middot; {{ m.quantity }}{{ m.unit }}</span>
             </div>
             <div class="meal-macros">
               <span>{{ m.calories }} cal</span>
@@ -110,7 +111,7 @@
               </div>
             }
             @if (isCustomEntry) {
-              <p class="custom-hint">✏️ Custom food — enter macros manually below</p>
+              <p class="custom-hint">Custom food &mdash; enter macros manually below</p>
             }
           </div>
 

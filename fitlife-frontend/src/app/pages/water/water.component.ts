@@ -13,19 +13,19 @@ import { ProgressRingComponent } from '../../shared/progress-ring/progress-ring.
       <div class="page-header">
         <div>
           <h1 class="page-title">Hydration</h1>
-          <p class="page-subtitle">Stay hydrated, stay healthy 💧</p>
+          <p class="page-subtitle">Stay hydrated, stay healthy</p>
         </div>
       </div>
 
       <div class="water-layout">
         <!-- Progress Card -->
         <div class="card progress-card">
-          <app-progress-ring [percentage]="waterService.progressPct" [size]="140" color="#3b82f6" label="Hydration" />
+          <app-progress-ring [percentage]="waterService.progressPctSignal()" [size]="140" color="#3b82f6" label="Hydration" />
           <div class="progress-info">
-            <div class="water-amount">{{ (waterService.todayTotalMl / 1000).toFixed(2) }}L</div>
-            <div class="water-goal">of {{ (waterService.dailyGoalMl / 1000).toFixed(1) }}L goal</div>
-            <div class="water-status" [class.goal-met]="waterService.progressPct >= 100">
-              {{ waterService.progressPct >= 100 ? '🎉 Goal reached!' : waterService.dailyGoalMl - waterService.todayTotalMl + 'ml remaining' }}
+            <div class="water-amount">{{ (waterService.todayTotalMlSignal() / 1000).toFixed(2) }}L</div>
+            <div class="water-goal">of {{ (waterService.dailyGoalMlSignal() / 1000).toFixed(1) }}L goal</div>
+            <div class="water-status" [class.goal-met]="waterService.progressPctSignal() >= 100">
+              {{ waterService.progressPctSignal() >= 100 ? 'Goal reached!' : (waterService.dailyGoalMlSignal() - waterService.todayTotalMlSignal()) + 'ml remaining' }}
             </div>
           </div>
         </div>
@@ -35,22 +35,22 @@ import { ProgressRingComponent } from '../../shared/progress-ring/progress-ring.
           <h3 class="section-title">Quick Add</h3>
           <div class="quick-btns">
             <button class="quick-btn" (click)="addWater(200)">
-              <span class="water-icon">🥤</span>
+              <span class="material-icons-round water-icon">local_drink</span>
               <span class="quick-amount">200ml</span>
               <span class="quick-label">Small glass</span>
             </button>
             <button class="quick-btn" (click)="addWater(330)">
-              <span class="water-icon">🧃</span>
+              <span class="material-icons-round water-icon">sports_bar</span>
               <span class="quick-amount">330ml</span>
               <span class="quick-label">Can</span>
             </button>
             <button class="quick-btn" (click)="addWater(500)">
-              <span class="water-icon">🍶</span>
+              <span class="material-icons-round water-icon">water_drop</span>
               <span class="quick-amount">500ml</span>
               <span class="quick-label">Bottle</span>
             </button>
             <button class="quick-btn" (click)="addWater(750)">
-              <span class="water-icon">🫙</span>
+              <span class="material-icons-round water-icon">emoji_food_beverage</span>
               <span class="quick-amount">750ml</span>
               <span class="quick-label">Large bottle</span>
             </button>
@@ -71,14 +71,14 @@ import { ProgressRingComponent } from '../../shared/progress-ring/progress-ring.
         <h3 class="section-title">Today's Log</h3>
         @if (waterService.todayLogs.length === 0) {
           <div class="empty-log">
-            <span class="empty-icon">💧</span>
+            <span class="material-icons-round empty-icon">water_drop</span>
             <p>No water logged yet. Stay hydrated!</p>
           </div>
         } @else {
           <div class="log-list">
             @for (log of waterService.todayLogs; track log.id) {
               <div class="log-item">
-                <span class="log-icon">💧</span>
+                <span class="material-icons-round log-icon">water_drop</span>
                 <span class="log-amount">{{ log.amountMl }}ml</span>
                 <button class="btn-icon delete" (click)="deleteLog(log.id)">
                   <span class="material-icons-round">delete</span>
@@ -118,7 +118,7 @@ import { ProgressRingComponent } from '../../shared/progress-ring/progress-ring.
       border-radius: var(--radius-md); cursor: pointer; transition: all 0.2s;
       &:hover { background: rgba(59,130,246,0.1); border-color: #3b82f6; }
     }
-    .water-icon { font-size: 1.8rem; }
+    .water-icon { font-size: 1.8rem; color: #3b82f6; }
     .quick-amount { font-size: var(--font-size-base); font-weight: 700; color: #3b82f6; }
     .quick-label { font-size: var(--font-size-xs); color: var(--text-muted); }
 
@@ -141,7 +141,7 @@ import { ProgressRingComponent } from '../../shared/progress-ring/progress-ring.
       display: flex; align-items: center; gap: 1rem; padding: 0.75rem 1rem;
       background: var(--bg-tertiary); border-radius: var(--radius-md);
     }
-    .log-icon { font-size: 1.2rem; }
+    .log-icon { color: #3b82f6; }
     .log-amount { flex: 1; font-weight: 600; color: #3b82f6; }
     .btn-icon.delete { background: none; border: none; cursor: pointer; color: var(--text-muted);
       &:hover { color: #ef4444; }
@@ -159,13 +159,13 @@ export class WaterComponent implements OnInit {
 
   async addWater(ml: number): Promise<void> {
     await this.waterService.addLog(ml);
-    this.toast.success(`Added ${ml}ml 💧`);
+    this.toast.success(`Added ${ml}ml`);
   }
 
   async addCustom(): Promise<void> {
     if (!this.customMl || this.customMl <= 0) return;
     await this.waterService.addLog(this.customMl);
-    this.toast.success(`Added ${this.customMl}ml 💧`);
+    this.toast.success(`Added ${this.customMl}ml`);
     this.customMl = null;
   }
 
@@ -174,4 +174,3 @@ export class WaterComponent implements OnInit {
     this.toast.info('Log removed');
   }
 }
-

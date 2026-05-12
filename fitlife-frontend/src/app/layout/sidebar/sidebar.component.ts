@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+﻿import { Component, inject } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 
@@ -10,7 +10,7 @@ import { AuthService } from '../../services/auth.service';
     <aside class="sidebar">
       <div class="sidebar-header">
         <div class="logo">
-          <span class="logo-icon">🥗</span>
+          <span class="material-icons-round logo-icon">fitness_center</span>
           <span class="logo-text">FitLife</span>
         </div>
       </div>
@@ -47,7 +47,7 @@ import { AuthService } from '../../services/auth.service';
       </nav>
 
       <div class="sidebar-footer">
-        <p class="motivational-text">Ready to crush your goals? 💪</p>
+        <p class="motivational-text">Ready to crush your goals?</p>
         <p class="motivational-sub">Every rep counts!</p>
       </div>
     </aside>
@@ -66,29 +66,25 @@ import { AuthService } from '../../services/auth.service';
       z-index: 100;
       overflow-y: auto;
     }
-
     .sidebar-header {
-      padding: 1.2rem 1.2rem;
+      padding: 1.2rem;
       border-bottom: 1px solid var(--border-color);
     }
-
     .logo {
       display: flex;
       align-items: center;
       gap: 0.6rem;
     }
-
     .logo-icon {
-      font-size: 1.5rem;
+      color: var(--green-primary);
+      font-size: 1.6rem;
     }
-
     .logo-text {
       font-size: var(--font-size-lg);
       font-weight: 800;
       color: var(--green-primary);
       letter-spacing: -0.5px;
     }
-
     .sidebar-nav {
       flex: 1;
       padding: 0.8rem 0.7rem;
@@ -96,7 +92,6 @@ import { AuthService } from '../../services/auth.service';
       flex-direction: column;
       gap: 0.25rem;
     }
-
     .nav-item {
       display: flex;
       align-items: center;
@@ -108,39 +103,28 @@ import { AuthService } from '../../services/auth.service';
       font-weight: 500;
       transition: all var(--transition-fast);
       cursor: pointer;
-
-      .material-icons-round {
-        font-size: 20px;
-      }
-
+      .material-icons-round { font-size: 20px; }
       &:hover {
         background: var(--green-bg);
         color: var(--text-primary);
       }
-
       &.active {
         background: var(--green-primary);
         color: #000;
         font-weight: 600;
-
-        .material-icons-round {
-          color: #000;
-        }
+        .material-icons-round { color: #000; }
       }
     }
-
     .sidebar-footer {
       padding: 1.2rem;
       border-top: 1px solid var(--border-color);
     }
-
     .motivational-text {
       font-size: var(--font-size-sm);
       font-weight: 600;
       color: var(--text-primary);
       margin-bottom: 0.15rem;
     }
-
     .motivational-sub {
       font-size: var(--font-size-xs);
       color: var(--text-muted);
@@ -150,3 +134,4 @@ import { AuthService } from '../../services/auth.service';
 export class SidebarComponent {
   authService = inject(AuthService);
 }
+

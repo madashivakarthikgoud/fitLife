@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+﻿import { Component, inject, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { WorkoutService, Workout, ExerciseCategory, FieldVisibility } from '../../services/workout.service';
 import { ToastService } from '../../services/toast.service';
@@ -80,16 +80,16 @@ export class WorkoutsComponent implements OnInit {
     if (this.fieldVisibility.duration && this.form.exerciseType === 'Cardio' && (!this.form.durationMin || this.form.durationMin <= 0))
       this.errors['duration'] = 'Duration is required for cardio';
     if (!this.form.caloriesBurned || this.form.caloriesBurned <= 0)
-      this.errors['calories'] = 'Calories burned is required — enter the value from your fitness device';
+      this.errors['calories'] = 'Calories burned is required â€” enter the value from your fitness device';
     if (Object.keys(this.errors).length > 0) return;
 
     try {
       if (this.editingId) {
         await this.workoutService.updateWorkout(this.editingId, this.form);
-        this.toastService.success('Workout updated successfully ✅');
+        this.toastService.success('Workout updated successfully');
       } else {
         await this.workoutService.addWorkout(this.form);
-        this.toastService.success('Workout logged successfully ✅');
+        this.toastService.success('Workout logged successfully');
       }
       this.closeModal();
     } catch {
@@ -106,3 +106,4 @@ export class WorkoutsComponent implements OnInit {
     this.form = { exerciseName: '', exerciseType: 'Strength', sets: null, reps: null, weightLbs: null, durationMin: null, distanceKm: null, caloriesBurned: null, notes: '' };
   }
 }
+

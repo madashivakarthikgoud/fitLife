@@ -12,7 +12,7 @@ import { ToastService } from '../../services/toast.service';
     <div class="auth-page">
       <div class="auth-left">
         <div class="auth-brand">
-          <span class="brand-icon">🥗</span>
+          <span class="material-icons-round brand-icon">fitness_center</span>
           <h1 class="brand-name">FitLife</h1>
           <p class="brand-tagline">Your personal fitness companion</p>
         </div>
@@ -29,11 +29,15 @@ import { ToastService } from '../../services/toast.service';
             <span class="material-icons-round">trending_up</span>
             <span>Monitor your progress</span>
           </div>
+          <div class="feature">
+            <span class="material-icons-round">auto_awesome</span>
+            <span>AI-powered insights</span>
+          </div>
         </div>
       </div>
       <div class="auth-right">
         <div class="auth-card">
-          <h2 class="auth-title">Welcome back! 👋</h2>
+          <h2 class="auth-title">Welcome back!</h2>
           <p class="auth-subtitle">Sign in to continue your fitness journey</p>
 
           <form (ngSubmit)="onLogin()" class="auth-form">
@@ -46,19 +50,26 @@ import { ToastService } from '../../services/toast.service';
                 name="email"
                 placeholder="Enter your email"
                 required
+                autocomplete="email"
               />
             </div>
 
             <div class="form-group">
               <label for="password">Password</label>
-              <input
-                type="password"
-                id="password"
-                [(ngModel)]="password"
-                name="password"
-                placeholder="Enter your password"
-                required
-              />
+              <div class="password-wrapper">
+                <input
+                  [type]="showPassword ? 'text' : 'password'"
+                  id="password"
+                  [(ngModel)]="password"
+                  name="password"
+                  placeholder="Enter your password"
+                  required
+                  autocomplete="current-password"
+                />
+                <button type="button" class="toggle-password" (click)="showPassword = !showPassword" tabindex="-1">
+                  <span class="material-icons-round">{{ showPassword ? 'visibility_off' : 'visibility' }}</span>
+                </button>
+              </div>
             </div>
 
             <div class="form-extras">
@@ -72,6 +83,8 @@ import { ToastService } from '../../services/toast.service';
             <button type="submit" class="btn btn-primary auth-submit" id="btn-login" [disabled]="isLoading">
               @if (isLoading) {
                 <span class="spinner"></span>
+              } @else {
+                <span class="material-icons-round">login</span>
               }
               Sign In
             </button>
@@ -79,7 +92,7 @@ import { ToastService } from '../../services/toast.service';
 
           <p class="auth-switch">
             Don't have an account?
-            <a routerLink="/register" class="switch-link">Sign up</a>
+            <a routerLink="/register" class="switch-link">Sign up free</a>
           </p>
         </div>
       </div>
@@ -133,8 +146,9 @@ import { ToastService } from '../../services/toast.service';
     }
 
     .brand-icon {
-      font-size: 4rem;
+      font-size: 4rem !important;
       display: block;
+      color: var(--green-primary);
       margin-bottom: 1rem;
     }
 
@@ -207,6 +221,32 @@ import { ToastService } from '../../services/toast.service';
       gap: 1.2rem;
     }
 
+    .password-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+
+      input {
+        width: 100%;
+        padding-right: 2.8rem;
+      }
+    }
+
+    .toggle-password {
+      position: absolute;
+      right: 0.75rem;
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      padding: 0;
+
+      &:hover { color: var(--text-secondary); }
+      .material-icons-round { font-size: 20px; }
+    }
+
     .form-extras {
       display: flex;
       align-items: center;
@@ -232,10 +272,7 @@ import { ToastService } from '../../services/toast.service';
       font-size: var(--font-size-sm);
       color: var(--green-primary);
       transition: color var(--transition-fast);
-
-      &:hover {
-        color: var(--green-light);
-      }
+      &:hover { color: var(--green-light); }
     }
 
     .auth-submit {
@@ -244,6 +281,7 @@ import { ToastService } from '../../services/toast.service';
       padding: 0.8rem;
       font-size: var(--font-size-md);
       margin-top: 0.5rem;
+      gap: 0.5rem;
 
       &:disabled {
         opacity: 0.7;
@@ -258,6 +296,7 @@ import { ToastService } from '../../services/toast.service';
       border-top-color: #000;
       border-radius: 50%;
       animation: spin 0.6s linear infinite;
+      flex-shrink: 0;
     }
 
     .auth-switch {
@@ -271,16 +310,11 @@ import { ToastService } from '../../services/toast.service';
       color: var(--green-primary);
       font-weight: 600;
       margin-left: 0.3rem;
-
-      &:hover {
-        color: var(--green-light);
-      }
+      &:hover { color: var(--green-light); }
     }
 
     @media (max-width: 768px) {
-      .auth-left {
-        display: none;
-      }
+      .auth-left { display: none; }
     }
   `]
 })
@@ -293,15 +327,16 @@ export class LoginComponent {
   password = '';
   rememberMe = false;
   isLoading = false;
+  showPassword = false;
 
   async onLogin(): Promise<void> {
-    if (!this.email || !this.password) {
+    if (!this.email.trim() || !this.password) {
       this.toastService.error('Please fill in all fields');
       return;
     }
 
     this.isLoading = true;
-    const success = await this.authService.login(this.email, this.password);
+    const success = await this.authService.login(this.email.trim(), this.password);
     this.isLoading = false;
 
     if (success) {

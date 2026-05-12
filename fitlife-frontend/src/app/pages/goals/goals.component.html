@@ -2,7 +2,7 @@
   <div class="page-header">
     <div>
       <h1 class="page-title">Goals & Weight Tracking</h1>
-      <p class="page-subtitle">Set goals, log your weight, track real progress ⚖️</p>
+      <p class="page-subtitle">Set goals, log your weight, track real progress</p>
     </div>
     <div class="header-actions">
       <button class="btn btn-secondary" (click)="openWeightModal()">
@@ -31,7 +31,7 @@
     </div>
   } @else {
     <div class="card weight-prompt">
-      <span class="prompt-icon">⚖️</span>
+      <span class="prompt-icon material-icons-round" style="font-size:2.5rem;color:var(--text-muted)">monitor_weight</span>
       <div>
         <strong>Start by logging your weight</strong>
         <p>Log your weight regularly to track real progress toward your goals.</p>
@@ -41,7 +41,7 @@
   }
 
   @if (activeGoals.length === 0 && completedGoals.length === 0) {
-    <app-empty-state icon="🎯" title="No goals set yet"
+    <app-empty-state icon="flag" title="No goals set yet"
       subtitle="Set a weight goal and log your weight periodically to track real progress!"
       actionLabel="Set Your First Goal" (action)="openModal()" />
   }
@@ -95,13 +95,13 @@
   }
 
   @if (completedGoals.length > 0) {
-    <h3 class="section-title completed-title">Completed Goals 🏆</h3>
+    <h3 class="section-title completed-title">Completed Goals</h3>
     <div class="goals-grid">
       @for (goal of completedGoals; track goal.id) {
         <div class="goal-card card completed">
           <div class="goal-top">
             <h4>{{ goal.title }}</h4>
-            <span class="completed-badge">✅ Done</span>
+          <span class="completed-badge">Done</span>
           </div>
           <p class="goal-stat-line">{{ goal.targetValue }} {{ goal.unit }} achieved!</p>
         </div>
@@ -129,7 +129,7 @@
             </select>
           </div>
           @if (form.type === 'weight') {
-            <div class="form-hint">💡 Your starting weight ({{ form.currentValue }}kg) is auto-set from your latest log. Progress updates automatically each time you log weight.</div>
+          <div class="form-hint">Your starting weight ({{ form.currentValue }}kg) is auto-set from your latest log. Progress updates automatically each time you log weight.</div>
           }
           <div class="form-row">
             <div class="form-group">

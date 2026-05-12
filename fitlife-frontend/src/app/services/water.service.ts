@@ -1,4 +1,4 @@
-import { Injectable, signal, inject } from '@angular/core';
+import { Injectable, signal, inject, computed } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../environments/environment';
 import { ToastService } from './toast.service';
@@ -23,23 +23,39 @@ export class WaterService {
 
   constructor(private http: HttpClient, private toast: ToastService) {}
 
-  get dailyGoalMl(): number {
+  /** Reactive signal for daily goal */
+  readonly dailyGoalMlSignal = computed(() => {
     const user = this.authService.currentUser();
     return user ? this.calc.calcWaterGoalMl(user) : 2000;
+  });
+
+  /** Non-signal getter for backward compatibility */
+  get dailyGoalMl(): number {
+    return this.dailyGoalMlSignal();
   }
 
+  /** Reactive signal for today's total */
+  readonly todayTotalMlSignal = computed(() =>
+    this.logs().reduce((s, l) => s + l.amountMl, 0)
+  );
+
   get todayTotalMl(): number {
-    return this.logs().reduce((s, l) => s + l.amountMl, 0);
+    return this.todayTotalMlSignal();
   }
 
   get todayLogs(): WaterLog[] {
     return this.logs();
   }
 
-  get progressPct(): number {
-    const goal = this.dailyGoalMl;
+  /** Reactive signal for progress percentage */
+  readonly progressPctSignal = computed(() => {
+    const goal = this.dailyGoalMlSignal();
     if (goal === 0) return 0;
-    return Math.min(100, Math.round((this.todayTotalMl / goal) * 100));
+    return Math.min(100, Math.round((this.todayTotalMlSignal() / goal) * 100));
+  });
+
+  get progressPct(): number {
+    return this.progressPctSignal();
   }
 
   loadTodayLogs(): void {

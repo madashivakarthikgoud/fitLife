@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, computed } from '@angular/core';
+import { Component, inject, OnInit, computed, effect } from '@angular/core';
 import { Router } from '@angular/router';
 import { DecimalPipe } from '@angular/common';
 import { WorkoutService } from '../../services/workout.service';
@@ -52,17 +52,17 @@ export class DashboardComponent implements OnInit {
   weeklyStreak = computed(() => {
     let streak = 0;
     const allWorkouts = [...this.workoutService.historyWorkouts(), ...this.workoutService.workouts()];
-    // Start from yesterday (today is still in progress)
-    for (let i = 1; i <= 7; i++) {
+    // Check if today has a workout
+    const today = new Date().toISOString().split('T')[0];
+    if (allWorkouts.some(w => w.date?.split('T')[0] === today)) streak++;
+    else return 0;
+    // Check previous consecutive days
+    for (let i = 1; i <= 30; i++) {
       const d = new Date(); d.setDate(d.getDate() - i);
       const dateStr = d.toISOString().split('T')[0];
-      const hasWorkout = allWorkouts.some(w => w.date?.split('T')[0] === dateStr);
-      if (hasWorkout) streak++;
+      if (allWorkouts.some(w => w.date?.split('T')[0] === dateStr)) streak++;
       else break;
     }
-    // If today also has a workout, count it too
-    const today = new Date().toISOString().split('T')[0];
-    if (this.workoutService.workouts().some(w => w.date?.split('T')[0] === today)) streak++;
     return streak;
   });
 
@@ -80,9 +80,10 @@ export class DashboardComponent implements OnInit {
     return goal > 0 ? Math.min(100, Math.round((this.todayProtein() / goal) * 100)) : 0;
   });
 
-  hydrationPct = computed(() => this.waterService.progressPct);
-  hydrationMl = computed(() => this.waterService.todayTotalMl);
-  hydrationGoal = computed(() => this.waterService.dailyGoalMl);
+  // Use reactive signals from water service
+  hydrationPct = computed(() => this.waterService.progressPctSignal());
+  hydrationMl = computed(() => this.waterService.todayTotalMlSignal());
+  hydrationGoal = computed(() => this.waterService.dailyGoalMlSignal());
 
   latestWeight = computed(() => this.weightLogService.latestWeight);
   weightChange = computed(() => this.weightLogService.weightChange);
@@ -90,18 +91,34 @@ export class DashboardComponent implements OnInit {
   recentItems = computed(() => {
     const workouts = this.workoutService.getTodayWorkouts().slice(0, 3).map(w => ({
       id: `w-${w.id}`, type: 'workout', name: w.exerciseName,
-      detail: `${w.exerciseType} • ${w.caloriesBurned ?? 0} cal`,
+      detail: `${w.exerciseType} · ${w.caloriesBurned ?? 0} cal`,
       time: this.timeAgo(w.date),
       sortKey: new Date(w.date).getTime()
     }));
     const meals = this.nutritionService.getTodayMeals().slice(0, 3).map(m => ({
       id: `m-${m.id}`, type: 'meal', name: m.foodName,
-      detail: `${m.mealType} • ${m.calories} cal`,
+      detail: `${m.mealType} · ${m.calories} cal`,
       time: this.timeAgo(m.date),
       sortKey: new Date(m.date).getTime()
     }));
     return [...workouts, ...meals].sort((a, b) => b.sortKey - a.sortKey).slice(0, 5);
   });
+
+  private dataLoaded = computed(() => {
+    // Track when history data arrives to auto-generate insights
+    const w = this.workoutService.historyWorkouts().length;
+    const n = this.nutritionService.historyMeals().length;
+    const wl = this.waterService.historyLogs().length;
+    return w + n + wl;
+  });
+
+  constructor() {
+    // Regenerate insights whenever history data changes
+    effect(() => {
+      this.dataLoaded(); // subscribe to changes
+      this.insightsService.generateInsights();
+    });
+  }
 
   ngOnInit(): void {
     this.workoutService.loadWorkouts();
@@ -120,9 +137,6 @@ export class DashboardComponent implements OnInit {
     this.workoutService.loadHistory(startStr, endStr);
     this.nutritionService.loadHistory(startStr, endStr);
     this.waterService.loadHistory(startStr, endStr);
-
-    // Generate insights after a brief delay for data to load
-    setTimeout(() => this.insightsService.generateInsights(), 1500);
   }
 
   navigate(path: string): void { this.router.navigate([path]); }

@@ -158,7 +158,7 @@ export class HistoryComponent implements OnInit {
     // Water daily summaries
     const waterLogs = this.waterService.historyLogs();
     this.waterSummaries = days.map(day => {
-      const dayLogs = waterLogs.filter(l => l.date === day.date);
+      const dayLogs = waterLogs.filter(l => (l.date?.split('T')[0] ?? l.date) === day.date);
       return {
         date: day.date,
         label: day.label,

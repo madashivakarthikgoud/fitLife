@@ -2,7 +2,7 @@
   <div class="page-header">
     <div>
       <h1 class="page-title">Workouts</h1>
-      <p class="page-subtitle">Track your exercises and build strength 💪</p>
+      <p class="page-subtitle">Track your exercises and build strength</p>
     </div>
     <button class="btn btn-primary" id="btn-log-workout" (click)="openModal()">
       <span class="material-icons-round">add</span> Log Workout
@@ -11,7 +11,7 @@
 
   @if (workoutService.workouts().length === 0) {
     <app-empty-state
-      icon="🏋️"
+      icon="fitness_center"
       title="No workouts logged yet"
       subtitle="Start tracking your exercises to see your progress!"
       actionLabel="Log Your First Workout"

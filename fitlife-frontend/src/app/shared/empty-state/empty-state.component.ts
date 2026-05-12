@@ -5,7 +5,9 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
   standalone: true,
   template: `
     <div class="empty-state">
-      <div class="empty-icon">{{ icon }}</div>
+      <div class="empty-icon">
+        <span class="material-icons-round">{{ icon }}</span>
+      </div>
       <h3 class="empty-title">{{ title }}</h3>
       <p class="empty-subtitle">{{ subtitle }}</p>
       @if (actionLabel) {
@@ -28,9 +30,9 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
     }
 
     .empty-icon {
-      font-size: 4rem;
       margin-bottom: 1rem;
-      opacity: 0.8;
+      opacity: 0.5;
+      .material-icons-round { font-size: 4rem; color: var(--text-muted); }
     }
 
     .empty-title {
@@ -54,7 +56,7 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
   `]
 })
 export class EmptyStateComponent {
-  @Input() icon = '📋';
+  @Input() icon = 'inbox';
   @Input() title = 'Nothing here yet';
   @Input() subtitle = 'Get started by adding your first entry.';
   @Input() actionLabel = '';

@@ -2,12 +2,14 @@
   <!-- Profile Completion Banner -->
   @if (!profileComplete()) {
     <div class="profile-banner" (click)="navigate('/profile')">
-      <span class="banner-icon">⚠️</span>
+      <span class="banner-icon">
+        <span class="material-icons-round" style="color:#fbbf24;font-size:2rem">person_add</span>
+      </span>
       <div class="banner-text">
         <strong>Complete Your Profile</strong>
-        <p>Add your height, weight & age to unlock accurate calorie targets, BMI tracking, and personalized recommendations.</p>
+        <p>Add your height, weight &amp; age to unlock accurate calorie targets, BMI tracking, and personalized recommendations.</p>
       </div>
-      <button class="btn btn-primary btn-sm">Go to Profile →</button>
+      <button class="btn btn-primary btn-sm">Go to Profile &rarr;</button>
     </div>
   }
 
@@ -20,7 +22,9 @@
     <div class="stat-card">
       <div class="stat-top">
         <div><div class="stat-value">{{ caloriesBurned() }}</div></div>
-        <div class="stat-icon orange">🔥</div>
+        <div class="stat-icon orange">
+          <span class="material-icons-round">local_fire_department</span>
+        </div>
       </div>
       <div class="stat-label">Calories Burned</div>
       <div class="stat-micro">From today's workouts</div>
@@ -29,7 +33,9 @@
     <div class="stat-card">
       <div class="stat-top">
         <div><div class="stat-value">{{ workoutCount() }}</div></div>
-        <div class="stat-icon green">💪</div>
+        <div class="stat-icon green">
+          <span class="material-icons-round">fitness_center</span>
+        </div>
       </div>
       <div class="stat-label">Workouts Today</div>
       <div class="stat-micro">Keep the momentum going!</div>
@@ -39,10 +45,12 @@
       <div class="stat-top">
         <div>
           <div class="stat-value">
-            @if (latestWeight() !== null) { {{ latestWeight() }}kg } @else { — }
+            @if (latestWeight() !== null) { {{ latestWeight() }}kg } @else { &mdash; }
           </div>
         </div>
-        <div class="stat-icon pink">⚖️</div>
+        <div class="stat-icon pink">
+          <span class="material-icons-round">monitor_weight</span>
+        </div>
       </div>
       <div class="stat-label">Current Weight</div>
       <div class="stat-micro">
@@ -57,7 +65,9 @@
     <div class="stat-card">
       <div class="stat-top">
         <div><div class="stat-value">{{ weeklyStreak() }}</div></div>
-        <div class="stat-icon teal">📈</div>
+        <div class="stat-icon teal">
+          <span class="material-icons-round">trending_up</span>
+        </div>
       </div>
       <div class="stat-label">Day Streak</div>
       <div class="stat-micro">Consecutive workout days</div>
@@ -71,10 +81,13 @@
 
   <div class="dashboard-lower">
     <div class="card today-goals">
-      <h3 class="card-title">Today's Progress</h3>
+      <h3 class="card-title">
+        <span class="material-icons-round">track_changes</span>
+        Today's Progress
+      </h3>
       @if (!profileComplete()) {
         <div class="no-data-hint">
-          <p>💡 Complete your profile to see personalized daily targets based on your BMR & TDEE.</p>
+          <p>Complete your profile to see personalized daily targets based on your BMR &amp; TDEE.</p>
         </div>
       }
 
@@ -104,7 +117,10 @@
         <div class="goal-info">
           <span class="goal-pct water-pct">{{ hydrationPct() }}%</span>
           <div class="goal-details">
-            <span class="goal-label">💧 Hydration</span>
+            <span class="goal-label">
+              <span class="material-icons-round" style="font-size:14px;vertical-align:middle">water_drop</span>
+              Hydration
+            </span>
             <span class="goal-sub">{{ hydrationMl() }}ml / {{ hydrationGoal() }}ml</span>
           </div>
         </div>
@@ -113,7 +129,10 @@
     </div>
 
     <div class="card quick-actions">
-      <h3 class="card-title">Quick Actions</h3>
+      <h3 class="card-title">
+        <span class="material-icons-round">bolt</span>
+        Quick Actions
+      </h3>
       <div class="actions-grid">
         <button class="action-btn green-btn" (click)="navigate('/workouts')">
           <span class="material-icons-round">fitness_center</span><span>Log Workout</span>
@@ -132,9 +151,12 @@
   </div>
 
   <div class="card recent-activity">
-    <h3 class="card-title">Recent Activity</h3>
+    <h3 class="card-title">
+      <span class="material-icons-round">history</span>
+      Recent Activity
+    </h3>
     @if (recentItems().length === 0) {
-      <p class="no-activity">No recent activity. Start logging workouts, meals or weight! 🚀</p>
+      <p class="no-activity">No recent activity. Start logging workouts, meals or weight!</p>
     } @else {
       <div class="activity-list">
         @for (item of recentItems(); track item.id) {

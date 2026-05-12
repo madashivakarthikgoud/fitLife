@@ -9,7 +9,13 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const authService = inject(AuthService);
   const token = localStorage.getItem('fitlife_token');
 
-  if (token) {
+  // Don't attach token or intercept auth endpoints
+  const isAuthEndpoint = req.url.includes('/auth/login') ||
+    req.url.includes('/auth/register') ||
+    req.url.includes('/auth/security-question') ||
+    req.url.includes('/auth/reset-password');
+
+  if (token && !isAuthEndpoint) {
     req = req.clone({
       setHeaders: { Authorization: `Bearer ${token}` }
     });
@@ -17,9 +23,13 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
 
   return next(req).pipe(
     catchError((error) => {
-      if (error.status === 401) {
+      if (error.status === 401 && !isAuthEndpoint) {
+        // Token expired or invalid — clear session and redirect to login
         authService.logout();
-        router.navigate(['/login']);
+        const currentUrl = router.url;
+        if (!currentUrl.includes('/login')) {
+          router.navigate(['/login']);
+        }
       }
       return throwError(() => error);
     })

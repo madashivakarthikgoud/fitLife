@@ -72,9 +72,9 @@ export class HeaderComponent {
     const hour = new Date().getHours();
     const name = this.authService.currentUser()?.fullName?.split(' ')[0] || '';
     const nameStr = name ? `, ${name}` : '';
-    if (hour < 12) return `Good morning${nameStr}! Ready to get stronger? 🔥`;
-    if (hour < 17) return `Good afternoon${nameStr}! Let's crush those goals! 💪`;
-    return `Good evening${nameStr}! Time to wind down or work out? 🌙`;
+    if (hour < 12) return `Good morning${nameStr}! Ready to get stronger?`;
+    if (hour < 17) return `Good afternoon${nameStr}! Let's crush those goals!`;
+    return `Good evening${nameStr}! Time to wind down or work out?`;
   }
 
   goToProfile(): void {
