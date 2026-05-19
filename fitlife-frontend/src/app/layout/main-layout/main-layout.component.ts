@@ -9,11 +9,11 @@ import { HeaderComponent } from '../header/header.component';
   imports: [RouterOutlet, SidebarComponent, HeaderComponent],
   template: `
     <div class="layout">
-      <app-sidebar />
+      <app-sidebar></app-sidebar>
       <div class="layout-main">
-        <app-header />
+        <app-header></app-header>
         <main class="layout-content">
-          <router-outlet />
+          <router-outlet></router-outlet>
         </main>
       </div>
     </div>

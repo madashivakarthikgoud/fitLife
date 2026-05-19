@@ -34,10 +34,15 @@ export class AuthService {
     const token = localStorage.getItem('fitlife_token');
     const savedUser = localStorage.getItem('fitlife_user');
     if (token && savedUser && !this.isTokenExpired(token)) {
-      this.currentUser.set(JSON.parse(savedUser));
-      this.isLoggedIn.set(true);
-      // Always refresh profile from server to get latest data
-      this.loadProfile();
+      try {
+        this.currentUser.set(JSON.parse(savedUser));
+        this.isLoggedIn.set(true);
+        // Always refresh profile from server to get latest data
+        this.loadProfile();
+      } catch {
+        // Corrupted local storage should not crash app bootstrap.
+        this.logout();
+      }
     } else if (token) {
       // Token exists but is expired — clean up
       this.logout();
@@ -62,7 +67,13 @@ export class AuthService {
       this.http.post<AuthResponse>(`${this.apiUrl}/auth/login`, { email, password })
         .subscribe({
           next: (res) => { this.setSession(res); this.toast.success('Login successful'); resolve(true); },
-          error: (err) => { this.toast.error(err.error?.error || 'Login failed.'); resolve(false); }
+          error: (err) => {
+            const message = err.status === 0
+              ? 'Cannot connect to server. Make sure backend is running.'
+              : (err.error?.error || 'Login failed.');
+            this.toast.error(message);
+            resolve(false);
+          }
         });
     });
   }
@@ -72,7 +83,13 @@ export class AuthService {
       this.http.post<AuthResponse>(`${this.apiUrl}/auth/register`, { fullName, email, password, securityQuestion, securityAnswer })
         .subscribe({
           next: (res) => { this.setSession(res); this.toast.success('Registration successful'); resolve(true); },
-          error: (err) => { this.toast.error(err.error?.error || 'Registration failed.'); resolve(false); }
+          error: (err) => {
+            const message = err.status === 0
+              ? 'Cannot connect to server. Make sure backend is running.'
+              : (err.error?.error || 'Registration failed.');
+            this.toast.error(message);
+            resolve(false);
+          }
         });
     });
   }

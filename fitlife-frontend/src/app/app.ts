@@ -7,8 +7,8 @@ import { ToastComponent } from './shared/toast/toast.component';
   standalone: true,
   imports: [RouterOutlet, ToastComponent],
   template: `
-    <router-outlet />
-    <app-toast />
+    <router-outlet></router-outlet>
+    <app-toast></app-toast>
   `,
   styles: [`:host { display: block; }`]
 })
