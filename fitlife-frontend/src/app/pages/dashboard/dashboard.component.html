@@ -1,0 +1,177 @@
+<div class="dashboard">
+  <!-- Profile Completion Banner -->
+  @if (!profileComplete()) {
+    <div class="profile-banner" (click)="navigate('/profile')">
+      <span class="banner-icon">
+        <span class="material-icons-round" style="color:#fbbf24;font-size:2rem">person_add</span>
+      </span>
+      <div class="banner-text">
+        <strong>Complete Your Profile</strong>
+        <p>Add your height, weight &amp; age to unlock accurate calorie targets, BMI tracking, and personalized recommendations.</p>
+      </div>
+      <button class="btn btn-primary btn-sm">Go to Profile &rarr;</button>
+    </div>
+  }
+
+  <div class="page-header">
+    <h1 class="page-title">Dashboard</h1>
+    <p class="page-subtitle">Today's real-time fitness snapshot</p>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-top">
+        <div><div class="stat-value">{{ caloriesBurned() }}</div></div>
+        <div class="stat-icon orange">
+          <span class="material-icons-round">local_fire_department</span>
+        </div>
+      </div>
+      <div class="stat-label">Calories Burned</div>
+      <div class="stat-micro">From today's workouts</div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-top">
+        <div><div class="stat-value">{{ workoutCount() }}</div></div>
+        <div class="stat-icon green">
+          <span class="material-icons-round">fitness_center</span>
+        </div>
+      </div>
+      <div class="stat-label">Workouts Today</div>
+      <div class="stat-micro">Keep the momentum going!</div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-top">
+        <div>
+          <div class="stat-value">
+            @if (latestWeight() !== null) { {{ latestWeight() }}kg } @else { &mdash; }
+          </div>
+        </div>
+        <div class="stat-icon pink">
+          <span class="material-icons-round">monitor_weight</span>
+        </div>
+      </div>
+      <div class="stat-label">Current Weight</div>
+      <div class="stat-micro">
+        @if (weightChange() !== null) {
+          {{ weightChange()! > 0 ? '+' : '' }}{{ weightChange() }}kg overall
+        } @else {
+          Log weight to track progress
+        }
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-top">
+        <div><div class="stat-value">{{ weeklyStreak() }}</div></div>
+        <div class="stat-icon teal">
+          <span class="material-icons-round">trending_up</span>
+        </div>
+      </div>
+      <div class="stat-label">Day Streak</div>
+      <div class="stat-micro">Consecutive workout days</div>
+    </div>
+  </div>
+
+  <!-- AI Insights -->
+  <div class="card insights-card">
+    <app-insights-panel />
+  </div>
+
+  <div class="dashboard-lower">
+    <div class="card today-goals">
+      <h3 class="card-title">
+        <span class="material-icons-round">track_changes</span>
+        Today's Progress
+      </h3>
+      @if (!profileComplete()) {
+        <div class="no-data-hint">
+          <p>Complete your profile to see personalized daily targets based on your BMR &amp; TDEE.</p>
+        </div>
+      }
+
+      <div class="goal-row">
+        <div class="goal-info">
+          <span class="goal-pct">{{ caloriesPct() }}%</span>
+          <div class="goal-details">
+            <span class="goal-label">Calories Intake</span>
+            <span class="goal-sub">{{ todayCalories() }} / {{ calorieGoal() | number }} kcal</span>
+          </div>
+        </div>
+      </div>
+      <div class="goal-bar-track"><div class="goal-bar-fill orange-fill" [style.width.%]="caloriesPct()"></div></div>
+
+      <div class="goal-row" style="margin-top: 1rem">
+        <div class="goal-info">
+          <span class="goal-pct">{{ proteinPct() }}%</span>
+          <div class="goal-details">
+            <span class="goal-label">Protein</span>
+            <span class="goal-sub">{{ todayProtein() }}g / {{ proteinGoal() }}g</span>
+          </div>
+        </div>
+      </div>
+      <div class="goal-bar-track"><div class="goal-bar-fill green-fill" [style.width.%]="proteinPct()"></div></div>
+
+      <div class="goal-row" style="margin-top: 1rem">
+        <div class="goal-info">
+          <span class="goal-pct water-pct">{{ hydrationPct() }}%</span>
+          <div class="goal-details">
+            <span class="goal-label">
+              <span class="material-icons-round" style="font-size:14px;vertical-align:middle">water_drop</span>
+              Hydration
+            </span>
+            <span class="goal-sub">{{ hydrationMl() }}ml / {{ hydrationGoal() }}ml</span>
+          </div>
+        </div>
+      </div>
+      <div class="goal-bar-track"><div class="goal-bar-fill blue-fill" [style.width.%]="hydrationPct()"></div></div>
+    </div>
+
+    <div class="card quick-actions">
+      <h3 class="card-title">
+        <span class="material-icons-round">bolt</span>
+        Quick Actions
+      </h3>
+      <div class="actions-grid">
+        <button class="action-btn green-btn" (click)="navigate('/workouts')">
+          <span class="material-icons-round">fitness_center</span><span>Log Workout</span>
+        </button>
+        <button class="action-btn orange-btn" (click)="navigate('/nutrition')">
+          <span class="material-icons-round">restaurant</span><span>Add Meal</span>
+        </button>
+        <button class="action-btn blue-btn" (click)="navigate('/water')">
+          <span class="material-icons-round">local_drink</span><span>Log Water</span>
+        </button>
+        <button class="action-btn pink-btn" (click)="navigate('/goals')">
+          <span class="material-icons-round">monitor_weight</span><span>Log Weight</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="card recent-activity">
+    <h3 class="card-title">
+      <span class="material-icons-round">history</span>
+      Recent Activity
+    </h3>
+    @if (recentItems().length === 0) {
+      <p class="no-activity">No recent activity. Start logging workouts, meals or weight!</p>
+    } @else {
+      <div class="activity-list">
+        @for (item of recentItems(); track item.id) {
+          <div class="activity-item">
+            <div class="activity-icon" [class]="item.type">
+              <span class="material-icons-round">{{ item.type === 'workout' ? 'fitness_center' : 'restaurant' }}</span>
+            </div>
+            <div class="activity-info">
+              <span class="activity-name">{{ item.name }}</span>
+              <span class="activity-detail">{{ item.detail }}</span>
+            </div>
+            <span class="activity-time">{{ item.time }}</span>
+          </div>
+        }
+      </div>
+    }
+  </div>
+</div>
