@@ -1,0 +1,143 @@
+<div class="workouts-page">
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Workouts</h1>
+      <p class="page-subtitle">Track your exercises and build strength</p>
+    </div>
+    <button class="btn btn-primary" id="btn-log-workout" (click)="openModal()">
+      <span class="material-icons-round">add</span> Log Workout
+    </button>
+  </div>
+
+  @if (workoutService.workouts().length === 0) {
+    <app-empty-state
+      icon="fitness_center"
+      title="No workouts logged yet"
+      subtitle="Start tracking your exercises to see your progress!"
+      actionLabel="Log Your First Workout"
+      (action)="openModal()"
+    />
+  } @else {
+    <div class="workout-list">
+      @for (w of workoutService.workouts(); track w.id) {
+        <div class="workout-card card">
+          <div class="workout-header">
+            <div class="workout-info">
+              <h3 class="workout-name">{{ w.exerciseName }}</h3>
+              <span class="workout-type-badge">{{ w.exerciseType }}</span>
+            </div>
+            <div class="workout-actions">
+              <button class="btn-icon" (click)="openModal(w)" title="Edit">
+                <span class="material-icons-round">edit</span>
+              </button>
+              <button class="btn-icon delete" (click)="deleteWorkout(w.id)" title="Delete">
+                <span class="material-icons-round">delete</span>
+              </button>
+            </div>
+          </div>
+          <div class="workout-stats">
+            @if (w.sets) { <div class="ws"><span class="ws-val">{{ w.sets }}</span><span class="ws-lbl">Sets</span></div> }
+            @if (w.reps) { <div class="ws"><span class="ws-val">{{ w.reps }}</span><span class="ws-lbl">Reps</span></div> }
+            @if (w.weightLbs) { <div class="ws"><span class="ws-val">{{ w.weightLbs }}</span><span class="ws-lbl">lbs</span></div> }
+            @if (w.durationMin) { <div class="ws"><span class="ws-val">{{ w.durationMin }}</span><span class="ws-lbl">min</span></div> }
+            @if (w.distanceKm) { <div class="ws"><span class="ws-val">{{ w.distanceKm }}</span><span class="ws-lbl">km</span></div> }
+            <div class="ws"><span class="ws-val">{{ w.caloriesBurned }}</span><span class="ws-lbl">cal</span></div>
+          </div>
+          @if (w.notes) { <p class="workout-notes">{{ w.notes }}</p> }
+        </div>
+      }
+    </div>
+  }
+
+  <!-- Modal -->
+  @if (showModal) {
+    <div class="modal-overlay" (click)="closeModal()">
+      <div class="modal-content" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <div>
+            <h2 class="modal-title">{{ editingId ? 'Edit Workout' : 'Add New Workout' }}</h2>
+            <p class="modal-subtitle">Log your exercise details to track your progress</p>
+          </div>
+          <button class="btn-icon" (click)="closeModal()">
+            <span class="material-icons-round">close</span>
+          </button>
+        </div>
+
+        <form (ngSubmit)="saveWorkout()" class="modal-form">
+          <div class="form-group">
+            <label for="exerciseName">Exercise Name</label>
+            <input type="text" id="exerciseName" [(ngModel)]="form.exerciseName" name="exerciseName" placeholder="E.g., Bench Press, Running" />
+            @if (errors['name']) { <span class="error-text">{{ errors['name'] }}</span> }
+          </div>
+
+          <div class="form-group">
+            <label for="exerciseType">Exercise Type</label>
+            <select id="exerciseType" [(ngModel)]="form.exerciseType" name="exerciseType" (change)="onTypeChange()">
+              @for (t of exerciseTypes; track t) { <option [value]="t">{{ t }}</option> }
+            </select>
+          </div>
+
+          @if (fieldVisibility.sets || fieldVisibility.reps) {
+            <div class="form-row">
+              @if (fieldVisibility.sets) {
+                <div class="form-group">
+                  <label for="sets">Sets</label>
+                  <input type="number" id="sets" [(ngModel)]="form.sets" name="sets" min="0" />
+                  @if (errors['sets']) { <span class="error-text">{{ errors['sets'] }}</span> }
+                </div>
+              }
+              @if (fieldVisibility.reps) {
+                <div class="form-group">
+                  <label for="reps">Reps</label>
+                  <input type="number" id="reps" [(ngModel)]="form.reps" name="reps" min="0" />
+                  @if (errors['reps']) { <span class="error-text">{{ errors['reps'] }}</span> }
+                </div>
+              }
+            </div>
+          }
+
+          <div class="form-row">
+            @if (fieldVisibility.weight) {
+              <div class="form-group">
+                <label for="weight">Weight (lbs)</label>
+                <input type="number" id="weight" [(ngModel)]="form.weightLbs" name="weightLbs" min="0" />
+              </div>
+            }
+            @if (fieldVisibility.duration) {
+              <div class="form-group">
+                <label for="duration">Duration (min)</label>
+                <input type="number" id="duration" [(ngModel)]="form.durationMin" name="durationMin" min="0" />
+                @if (errors['duration']) { <span class="error-text">{{ errors['duration'] }}</span> }
+              </div>
+            }
+          </div>
+
+          @if (fieldVisibility.distance) {
+            <div class="form-group">
+              <label for="distance">Distance (km)</label>
+              <input type="number" id="distance" [(ngModel)]="form.distanceKm" name="distanceKm" min="0" step="0.1" />
+            </div>
+          }
+
+          <div class="form-group">
+            <label for="notes">Notes</label>
+            <textarea id="notes" [(ngModel)]="form.notes" name="notes" placeholder="How did it feel? Any observations?"></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="calories">Calories Burned <span class="required-mark">*</span></label>
+            <input type="number" id="calories" [(ngModel)]="form.caloriesBurned" name="caloriesBurned" min="1"
+                   placeholder="Enter from your fitness device" required />
+            <span class="field-hint">Enter the actual value from your fitness tracker / smartwatch</span>
+            @if (errors['calories']) { <span class="error-text">{{ errors['calories'] }}</span> }
+          </div>
+
+          <div class="modal-actions">
+            <button type="button" class="btn btn-secondary" (click)="closeModal()">Cancel</button>
+            <button type="submit" class="btn btn-primary" id="btn-save-workout">Save Workout</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  }
+</div>
