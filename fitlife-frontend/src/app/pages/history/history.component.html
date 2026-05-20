@@ -1,0 +1,113 @@
+<div class="history-page">
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">History</h1>
+      <p class="page-subtitle">Your daily summaries &mdash; water, meals &amp; workouts</p>
+    </div>
+  </div>
+
+  <div class="filters card">
+    <div class="filter-row">
+      <div class="period-toggle">
+        <button [class.active]="period === 'week'" (click)="period = 'week'; onPeriodChange()">Last 7 Days</button>
+        <button [class.active]="period === 'month'" (click)="period = 'month'; onPeriodChange()">Last 30 Days</button>
+      </div>
+      <div class="tab-toggle">
+        <button [class.active]="activeTab === 'workouts'" (click)="activeTab = 'workouts'">Workouts</button>
+        <button [class.active]="activeTab === 'meals'" (click)="activeTab = 'meals'">Meals</button>
+        <button [class.active]="activeTab === 'water'" (click)="activeTab = 'water'">Water</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Aggregated Daily Summaries -->
+  <div class="card table-section">
+    @if (activeTab === 'workouts') {
+      @if (workoutSummaries.length === 0) {
+        <p class="empty-text">No workouts in this period</p>
+      } @else {
+        <table class="data-table">
+          <thead>
+            <tr><th>Date</th><th>Sessions</th><th>Types</th><th>Total Calories Burned</th></tr>
+          </thead>
+          <tbody>
+            @for (s of workoutSummaries; track s.date) {
+              <tr>
+                <td>{{ s.date | date:'mediumDate' }}</td>
+                <td>{{ s.count }}</td>
+                <td><span class="type-badge">{{ s.types }}</span></td>
+                <td>{{ s.totalCalories }} cal</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      }
+    } @else if (activeTab === 'meals') {
+      @if (mealSummaries.length === 0) {
+        <p class="empty-text">No meals in this period</p>
+      } @else {
+        <table class="data-table">
+          <thead>
+            <tr><th>Date</th><th>Meals</th><th>Total Calories</th><th>Protein</th><th>Carbs</th><th>Fat</th></tr>
+          </thead>
+          <tbody>
+            @for (s of mealSummaries; track s.date) {
+              <tr>
+                <td>{{ s.date | date:'mediumDate' }}</td>
+                <td>{{ s.count }}</td>
+                <td>{{ s.totalCalories }} cal</td>
+                <td>{{ s.totalProtein }}g</td>
+                <td>{{ s.totalCarbs }}g</td>
+                <td>{{ s.totalFat }}g</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      }
+    } @else {
+      @if (waterSummaries.length === 0) {
+        <p class="empty-text">No water logs in this period</p>
+      } @else {
+        <table class="data-table">
+          <thead>
+            <tr><th>Date</th><th>Entries</th><th>Total Water</th></tr>
+          </thead>
+          <tbody>
+            @for (s of waterSummaries; track s.date) {
+              <tr>
+                <td>{{ s.date | date:'mediumDate' }}</td>
+                <td>{{ s.count }}</td>
+                <td>{{ (s.totalMl / 1000).toFixed(2) }}L ({{ s.totalMl }}ml)</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      }
+    }
+  </div>
+
+  <!-- Charts -->
+  <div class="charts-grid">
+    <div class="card chart-card">
+      <h3 class="chart-title">Calories Intake ({{ period === 'week' ? 'Last 7 Days' : 'Last 30 Days' }})</h3>
+      <div class="chart-wrapper">
+        <canvas baseChart [datasets]="lineChartData.datasets" [labels]="lineChartData.labels"
+          [options]="lineChartOptions" type="line"></canvas>
+      </div>
+    </div>
+    <div class="card chart-card">
+      <h3 class="chart-title">Workout Sessions ({{ period === 'week' ? 'Last 7 Days' : 'Last 30 Days' }})</h3>
+      <div class="chart-wrapper">
+        <canvas baseChart [datasets]="barChartData.datasets" [labels]="barChartData.labels"
+          [options]="barChartOptions" type="bar"></canvas>
+      </div>
+    </div>
+    <div class="card chart-card">
+      <h3 class="chart-title">Macro Breakdown ({{ period === 'week' ? 'Weekly' : 'Monthly' }} Total)</h3>
+      <div class="chart-wrapper pie-wrapper">
+        <canvas baseChart [datasets]="pieChartData.datasets" [labels]="pieChartData.labels"
+          [options]="pieChartOptions" type="pie"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
