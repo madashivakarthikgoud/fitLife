@@ -1,0 +1,189 @@
+<div class="goals-page">
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Goals & Weight Tracking</h1>
+      <p class="page-subtitle">Set goals, log your weight, track real progress</p>
+    </div>
+    <div class="header-actions">
+      <button class="btn btn-secondary" (click)="openWeightModal()">
+        <span class="material-icons-round">monitor_weight</span> Log Weight
+      </button>
+      <button class="btn btn-primary" (click)="openModal()">
+        <span class="material-icons-round">add</span> Set Goal
+      </button>
+    </div>
+  </div>
+
+  <!-- Weight Summary -->
+  @if (weightHistory.length > 0) {
+    <div class="card weight-summary">
+      <div class="weight-current">
+        <span class="weight-label">Current Weight</span>
+        <span class="weight-value">{{ latestWeight }}kg</span>
+      </div>
+      @if (weightLogService.weightChange !== null) {
+        <div class="weight-change" [class.loss]="weightLogService.weightChange! < 0" [class.gain]="weightLogService.weightChange! > 0">
+          <span class="material-icons-round">{{ weightLogService.weightChange! <= 0 ? 'trending_down' : 'trending_up' }}</span>
+          <span>{{ weightLogService.weightChange! > 0 ? '+' : '' }}{{ weightLogService.weightChange }}kg overall</span>
+        </div>
+      }
+      <div class="weight-entries">{{ weightHistory.length }} weight entries logged</div>
+    </div>
+  } @else {
+    <div class="card weight-prompt">
+      <span class="prompt-icon material-icons-round" style="font-size:2.5rem;color:var(--text-muted)">monitor_weight</span>
+      <div>
+        <strong>Start by logging your weight</strong>
+        <p>Log your weight regularly to track real progress toward your goals.</p>
+      </div>
+      <button class="btn btn-primary" (click)="openWeightModal()">Log Weight</button>
+    </div>
+  }
+
+  @if (activeGoals.length === 0 && completedGoals.length === 0) {
+    <app-empty-state icon="flag" title="No goals set yet"
+      subtitle="Set a weight goal and log your weight periodically to track real progress!"
+      actionLabel="Set Your First Goal" (action)="openModal()" />
+  }
+
+  @if (activeGoals.length > 0) {
+    <h3 class="section-title">Active Goals</h3>
+    <div class="goals-grid">
+      @for (goal of activeGoals; track goal.id) {
+        <div class="goal-card card">
+          <div class="goal-top">
+            <div class="goal-title-row">
+              <h4>{{ goal.title }}</h4>
+              <button class="btn-icon delete" (click)="deleteGoal(goal.id)">
+                <span class="material-icons-round">delete</span>
+              </button>
+            </div>
+            <span class="goal-type-badge">{{ goal.type }}</span>
+          </div>
+          <div class="goal-progress-section">
+            <app-progress-ring [percentage]="getProgress(goal)" [size]="80" />
+            <div class="goal-stats">
+              <div class="goal-stat">
+                <span class="stat-val">{{ getCurrentDisplay(goal) }}</span>
+                <span class="stat-lbl">Current</span>
+              </div>
+              <div class="goal-stat">
+                <span class="stat-val">{{ goal.targetValue }}</span>
+                <span class="stat-lbl">Target {{ goal.unit }}</span>
+              </div>
+            </div>
+          </div>
+          @if (goal.type === 'weight') {
+            <div class="weight-goal-note">
+              <span class="material-icons-round">info</span>
+              Progress updates automatically when you log your weight
+            </div>
+            <button class="btn btn-secondary btn-block" (click)="openWeightModal()">
+              <span class="material-icons-round">monitor_weight</span> Update Weight
+            </button>
+          } @else {
+            <div class="goal-slider">
+              <label class="slider-label">Update progress:</label>
+              <input type="range" [min]="0" [max]="goal.targetValue" [value]="goal.currentValue"
+                (input)="updateProgress(goal, +$any($event.target).value)" />
+            </div>
+          }
+          <p class="goal-weeks">{{ weeksLeft(goal) }} weeks remaining</p>
+        </div>
+      }
+    </div>
+  }
+
+  @if (completedGoals.length > 0) {
+    <h3 class="section-title completed-title">Completed Goals</h3>
+    <div class="goals-grid">
+      @for (goal of completedGoals; track goal.id) {
+        <div class="goal-card card completed">
+          <div class="goal-top">
+            <h4>{{ goal.title }}</h4>
+          <span class="completed-badge">Done</span>
+          </div>
+          <p class="goal-stat-line">{{ goal.targetValue }} {{ goal.unit }} achieved!</p>
+        </div>
+      }
+    </div>
+  }
+
+  <!-- Set Goal Modal -->
+  @if (showModal) {
+    <div class="modal-overlay" (click)="closeModal()">
+      <div class="modal-content" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h2 class="modal-title">Set New Goal</h2>
+          <button class="btn-icon" (click)="closeModal()"><span class="material-icons-round">close</span></button>
+        </div>
+        <form (ngSubmit)="saveGoal()" class="modal-form">
+          <div class="form-group">
+            <label>Goal Title</label>
+            <input type="text" [(ngModel)]="form.title" name="title" placeholder="E.g., Reach 70kg, Run 5k" />
+          </div>
+          <div class="form-group">
+            <label>Goal Type</label>
+            <select [(ngModel)]="form.type" name="type" (change)="onTypeChange()">
+              @for (t of goalTypes; track t.value) { <option [value]="t.value">{{ t.label }}</option> }
+            </select>
+          </div>
+          @if (form.type === 'weight') {
+          <div class="form-hint">Your starting weight ({{ form.currentValue }}kg) is auto-set from your latest log. Progress updates automatically each time you log weight.</div>
+          }
+          <div class="form-row">
+            <div class="form-group">
+              <label>Target Value</label>
+              <input type="number" [(ngModel)]="form.targetValue" name="target" min="1" />
+            </div>
+            <div class="form-group">
+              <label>{{ form.type === 'weight' ? 'Starting Weight' : 'Current Value' }}</label>
+              <input type="number" [(ngModel)]="form.currentValue" name="current" min="0" [readonly]="form.type === 'weight'" />
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Unit</label>
+              <input type="text" [(ngModel)]="form.unit" name="unit" [readonly]="form.type === 'weight'" />
+            </div>
+            <div class="form-group">
+              <label>Deadline</label>
+              <input type="date" [(ngModel)]="form.deadline" name="deadline" />
+            </div>
+          </div>
+          <div class="modal-actions">
+            <button type="button" class="btn btn-secondary" (click)="closeModal()">Cancel</button>
+            <button type="submit" class="btn btn-primary">Set Goal</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  }
+
+  <!-- Weight Log Modal -->
+  @if (showWeightModal) {
+    <div class="modal-overlay" (click)="closeWeightModal()">
+      <div class="modal-content modal-sm" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h2 class="modal-title">Log Your Weight</h2>
+          <button class="btn-icon" (click)="closeWeightModal()"><span class="material-icons-round">close</span></button>
+        </div>
+        <form (ngSubmit)="logWeight()" class="modal-form">
+          <div class="form-group">
+            <label>Weight (kg)</label>
+            <input type="number" [(ngModel)]="weightInput" name="weight" step="0.1" min="20" max="300"
+                   placeholder="E.g., 72.5" class="weight-input" />
+          </div>
+          <div class="form-group">
+            <label>Notes (optional)</label>
+            <input type="text" [(ngModel)]="weightNotes" name="notes" placeholder="E.g., morning weigh-in" />
+          </div>
+          <div class="modal-actions">
+            <button type="button" class="btn btn-secondary" (click)="closeWeightModal()">Cancel</button>
+            <button type="submit" class="btn btn-primary">Save Weight</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  }
+</div>
