@@ -1,0 +1,162 @@
+<div class="profile-page">
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Profile</h1>
+      <p class="page-subtitle">Your body, your data</p>
+    </div>
+    <div class="header-actions">
+      <button class="btn btn-primary" id="btn-edit-profile" (click)="isEditing ? saveProfile() : toggleEdit()">
+        <span class="material-icons-round">{{ isEditing ? 'save' : 'edit' }}</span>
+        {{ isEditing ? 'Save' : 'Edit Profile' }}
+      </button>
+    </div>
+  </div>
+
+  <div class="profile-layout">
+    <div class="card profile-form-card">
+      <h3 class="section-title">Personal Information</h3>
+      <p class="section-sub">Keep it updated for accurate insights</p>
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Full Name</label>
+          @if (isEditing) {
+            <input type="text" [(ngModel)]="form.fullName" name="fullName" />
+            @if (errors['name']) { <span class="error-text">{{ errors['name'] }}</span> }
+          } @else { <div class="display-value">{{ user?.fullName || '—' }}</div> }
+        </div>
+        <div class="form-group">
+          <label>Email</label>
+          @if (isEditing) {
+            <input type="email" [(ngModel)]="form.email" name="email" />
+          } @else { <div class="display-value">{{ user?.email || '—' }}</div> }
+        </div>
+        <div class="form-group">
+          <label>Age</label>
+          @if (isEditing) {
+            <input type="number" [(ngModel)]="form.age" name="age" min="10" max="100" />
+            @if (errors['age']) { <span class="error-text">{{ errors['age'] }}</span> }
+          } @else { <div class="display-value">{{ user?.age || '—' }}</div> }
+        </div>
+        <div class="form-group">
+          <label>Gender</label>
+          @if (isEditing) {
+            <select [(ngModel)]="form.gender" name="gender">
+              @for (g of genders; track g) { <option [value]="g">{{ g }}</option> }
+            </select>
+          } @else { <div class="display-value">{{ user?.gender || '—' }}</div> }
+        </div>
+        <div class="form-group">
+          <label>Height (cm)</label>
+          @if (isEditing) {
+            <input type="number" [(ngModel)]="form.heightCm" name="heightCm" min="50" max="250" />
+            @if (errors['height']) { <span class="error-text">{{ errors['height'] }}</span> }
+          } @else { <div class="display-value">{{ user?.heightCm || '—' }}</div> }
+        </div>
+        <div class="form-group">
+          <label>Weight (kg)</label>
+          @if (isEditing) {
+            <input type="number" [(ngModel)]="form.weightKg" name="weightKg" min="20" max="300" />
+            @if (errors['weight']) { <span class="error-text">{{ errors['weight'] }}</span> }
+          } @else { <div class="display-value">{{ user?.weightKg || '—' }}</div> }
+        </div>
+      </div>
+
+      <div class="form-group full-width">
+        <label>Activity Level</label>
+        @if (isEditing) {
+          <select [(ngModel)]="form.activityLevel" name="activityLevel">
+            @for (a of activityLevels; track a) { <option [value]="a">{{ a }}</option> }
+          </select>
+        } @else { <div class="display-value">{{ user?.activityLevel || '—' }}</div> }
+      </div>
+
+      <div class="form-group full-width">
+        <label>Fitness Goal</label>
+        @if (isEditing) {
+          <select [(ngModel)]="form.fitnessGoal" name="fitnessGoal">
+            @for (g of fitnessGoals; track g) { <option [value]="g">{{ g }}</option> }
+          </select>
+        } @else { <div class="display-value">{{ user?.fitnessGoal || '—' }}</div> }
+      </div>
+
+      @if (isEditing) {
+        <div class="form-actions">
+          <button class="btn btn-secondary" (click)="toggleEdit()">Cancel</button>
+          <button class="btn btn-primary" (click)="saveProfile()">Save Changes</button>
+        </div>
+      }
+    </div>
+
+    <div class="profile-sidebar">
+      <!-- Progress Avatar Card -->
+      <div class="card avatar-card">
+        <app-progress-avatar
+          [size]="160"
+          [initials]="authService.getInitials()"
+          [bmi]="bmi"
+          [bmiLabel]="bmiLabel"
+          [bmiColor]="bmiColor"
+          [nutritionPct]="nutritionPct"
+          [hydrationPct]="hydrationPct"
+        />
+        <h3 class="avatar-name">{{ user?.fullName || 'User' }}</h3>
+        <p class="avatar-goal">{{ user?.fitnessGoal || 'Set your goal' }}</p>
+        <div class="avatar-legend">
+          <span class="legend-item"><span class="dot" style="background:#4ade80"></span>Nutrition</span>
+          <span class="legend-item"><span class="dot" style="background:#3b82f6"></span>Hydration</span>
+          <span class="legend-item"><span class="dot" [style.background]="bmiColor"></span>BMI</span>
+        </div>
+      </div>
+
+      <!-- Computed Fitness Stats -->
+      @if (stats) {
+        <div class="card fitness-stats-card">
+          <h3 class="stats-title">Computed Fitness Stats</h3>
+          <p class="stats-sub">Based on your profile data</p>
+          <div class="stats-grid">
+            <div class="stat-box">
+              <span class="stat-val" [style.color]="bmiColor">{{ bmi }}</span>
+              <span class="stat-lbl">BMI</span>
+              <span class="stat-sub" [style.color]="bmiColor">{{ bmiLabel }}</span>
+            </div>
+            <div class="stat-box">
+              <span class="stat-val">{{ stats.bmr }}</span>
+              <span class="stat-lbl">BMR</span>
+              <span class="stat-sub">kcal/day</span>
+            </div>
+            <div class="stat-box">
+              <span class="stat-val">{{ stats.tdee }}</span>
+              <span class="stat-lbl">TDEE</span>
+              <span class="stat-sub">kcal/day</span>
+            </div>
+            <div class="stat-box highlight">
+              <span class="stat-val green">{{ stats.caloricTarget }}</span>
+              <span class="stat-lbl">Daily Target</span>
+              <span class="stat-sub">kcal/day</span>
+            </div>
+          </div>
+          <div class="macro-targets">
+            <h4>Macro Targets</h4>
+            <div class="macro-row">
+              <span class="macro-lbl">Protein</span>
+              <span class="macro-val">{{ stats.proteinTarget }}g</span>
+            </div>
+            <div class="macro-row">
+              <span class="macro-lbl">Carbs</span>
+              <span class="macro-val">{{ stats.carbsTarget }}g</span>
+            </div>
+            <div class="macro-row">
+              <span class="macro-lbl">Fat</span>
+              <span class="macro-val">{{ stats.fatTarget }}g</span>
+            </div>
+            <div class="macro-row water">
+              <span class="macro-lbl">💧 Water Goal</span>
+              <span class="macro-val">{{ (stats.waterGoalMl / 1000).toFixed(1) }}L</span>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+</div>
