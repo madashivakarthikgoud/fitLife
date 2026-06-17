@@ -1,5 +1,7 @@
 # FitLife — Personal Fitness Tracker
 
+**Live Demo:** [https://fitlife-frontend-nu.vercel.app](https://fitlife-frontend-nu.vercel.app)
+
 A full-stack fitness tracking application built with **Angular 21** and **Spring Boot 3**.
 
 ## Features
@@ -21,6 +23,9 @@ A full-stack fitness tracking application built with **Angular 21** and **Spring
 | Database | MySQL                             |
 | Auth     | JWT + BCrypt + Security Questions |
 | Charts   | Chart.js via ng2-charts           |
+| Deploy | Vercel                             |
+| Deploy (API)     | Railway |
+| Deploy (DB)   | Aiven           |
 
 ## Getting Started
 
