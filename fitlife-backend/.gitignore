@@ -1,33 +1,47 @@
-HELP.md
+# Node
+node_modules/
+dist/
+.angular/
+
+# Spring Boot
 target/
-.mvn/wrapper/maven-wrapper.jar
-!**/src/main/**/target/
-!**/src/test/**/target/
+*.jar
+*.war
+.mvn/
+!mvnw
+!mvnw.cmd
+!.mvn/wrapper/
+!.mvn/wrapper/maven-wrapper.properties
+!.mvn/wrapper/maven-wrapper.jar
 
-### STS ###
-.apt_generated
-.classpath
-.factorypath
-.project
-.settings
-.springBeans
-.sts4-cache
-
-### IntelliJ IDEA ###
-.idea
-*.iws
-*.iml
-*.ipr
-
-### NetBeans ###
-/nbproject/private/
-/nbbuild/
-/dist/
-/nbdist/
-/.nb-gradle/
-build/
-!**/src/main/**/build/
-!**/src/test/**/build/
-
-### VS Code ###
+# IDEs and OS
+.idea/
 .vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+.DS_Store
+Thumbs.db
+
+# Environment / Secrets
+.env
+.env.local
+.env.production
+*.pem
+*.key
+
+# Logs
+*.log
+logs/
+
+# Package lock (optional - uncomment if you want to commit it)
+# package-lock.json
+
+# OS files
+desktop.ini
+ehthumbs.db
+
+# Senstive Files
+aiven-details.md
