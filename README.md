@@ -2,7 +2,7 @@
 
 **Live Demo:** [https://fitlife-frontend-nu.vercel.app](https://fitlife-frontend-nu.vercel.app)
 
-A full-stack fitness tracking application built with **Angular 21** and **Spring Boot 3**.
+A full-stack fitness tracking application built with **Angular 21** and **Spring Boot 17**.
 
 ## Features
 
@@ -19,7 +19,7 @@ A full-stack fitness tracking application built with **Angular 21** and **Spring
 | Layer    | Technology                        |
 |----------|-----------------------------------|
 | Frontend | Angular 21, TypeScript, SCSS      |
-| Backend  | Spring Boot 3, Java 17, JPA      |
+| Backend  | Spring Boot 17, Java 17, JPA      |
 | Database | MySQL                             |
 | Auth     | JWT + BCrypt + Security Questions |
 | Charts   | Chart.js via ng2-charts           |
