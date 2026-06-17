@@ -1,44 +1,47 @@
-# See https://docs.github.com/get-started/getting-started-with-git/ignoring-files for more about ignoring files.
-
-# Compiled output
-/dist
-/tmp
-/out-tsc
-/bazel-out
-
 # Node
-/node_modules
-npm-debug.log
-yarn-error.log
+node_modules/
+dist/
+.angular/
 
-# IDEs and editors
+# Spring Boot
+target/
+*.jar
+*.war
+.mvn/
+!mvnw
+!mvnw.cmd
+!.mvn/wrapper/
+!.mvn/wrapper/maven-wrapper.properties
+!.mvn/wrapper/maven-wrapper.jar
+
+# IDEs and OS
 .idea/
-.project
-.classpath
-.c9/
-*.launch
-.settings/
-*.sublime-workspace
-
-# Visual Studio Code
-.vscode/*
-!.vscode/settings.json
-!.vscode/tasks.json
-!.vscode/launch.json
-!.vscode/extensions.json
-!.vscode/mcp.json
-.history/*
-
-# Miscellaneous
-/.angular/cache
-.sass-cache/
-/connect.lock
-/coverage
-/libpeerconnection.log
-testem.log
-/typings
-__screenshots__/
-
-# System files
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
 .DS_Store
 Thumbs.db
+
+# Environment / Secrets
+.env
+.env.local
+.env.production
+*.pem
+*.key
+
+# Logs
+*.log
+logs/
+
+# Package lock (optional - uncomment if you want to commit it)
+# package-lock.json
+
+# OS files
+desktop.ini
+ehthumbs.db
+
+# Senstive Files
+aiven-details.md
